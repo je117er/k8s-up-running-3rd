@@ -1,0 +1,19 @@
+FROM golang:1.12-alpine
+
+RUN apk update && apk upgrade && apk add --no-cache git nodejs bash npm gcompat
+
+RUN go get -u github.com/jteeuwen/go-bindata/...
+
+WORKDIR /go/src/github.com/kubernetes-up-and-running/kuard
+
+COPY . .
+
+ENV VERBOSE=0
+ENV PKG=github.com/kubernetes-up-and-running/kuard
+# arm64 for M1
+ENV ARCH=arm64
+ENV VERSION=test
+
+RUN build/build.sh
+
+CMD [ "/go/bin/kuard" ]
