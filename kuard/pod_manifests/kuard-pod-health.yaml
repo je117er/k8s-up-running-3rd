@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kuard
+spec:
+  containers:
+    - image: jodicl/kuard-amd64
+      name: kuard
+      livenessProbe:
+        # perform an http get req against /healthy
+        httpGet:
+          path: /healthy
+          port: 8080
+        # start 5s after container is created
+        initialDelaySeconds: 5
+        # probe must respond within 1s timeout
+        timeoutSeconds: 1
+        # probe gets called every 10s
+        periodSeconds: 10
+        # container starts every 3 failed probes
+        failureThreshold: 3
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
